@@ -28,3 +28,15 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_INVOICES_APP_C2491 }}
           projectId: invoices-app-c2491
+
+      - name: Deploy Web
+          uses: actions/checkout@v4
+          run: flutter packages pub run build_runner build --delete-conflicting-outputs
+          run: flutter build web --web-renderer canvaskit
+          
+          uses: FirebaseExtended/action-hosting-deploy@v0
+          with:
+            repoToken: ${{ secrets.GITHUB_TOKEN }}
+            firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_INVOICES_APP_C2491 }}
+            channelId: live
+            projectId: invoices-app-c2491
