@@ -9,26 +9,26 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - run: mkdir android/keystore
 
-      - name: Decode Keystore
-        id: decode_keystore
-        uses: timheuer/base64-to-file@v1
-        with:
-          fileName: 'keystore.jks'
-          fileDir: 'android/keystore/'
-          encodedString: ${{ secrets.KEYSTORE }}
+      # - name: Decode Keystore
+      #   id: decode_keystore
+      #   uses: timheuer/base64-to-file@v1
+      #   with:
+      #     fileName: 'keystore.jks'
+      #     fileDir: 'android/keystore/'
+      #     encodedString: ${{ secrets.KEYSTORE }}
 
-      - name: Install Java
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'zulu'
-          java-version: '17'
+      # - name: Install Java
+      #   uses: actions/setup-java@v2
+      #   with:
+      #     distribution: 'zulu'
+      #     java-version: '17'
 
       - name: Install Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@v2.7.1
         with:
           flutter-version: '3.22.0'
           channel: 'stable'
@@ -37,17 +37,17 @@ jobs:
       - run: flutter pub get
       - run: flutter packages pub run build_runner build --delete-conflicting-outputs
 
-      # - run: flutter test
-      - name: Build AAR
-        env:
-          ALIAS: ${{ secrets.KEY_ALIAS }}
-          PASS: ${{ secrets.KEY_PASS }}
-        run: flutter build appbundle --release
+      # # - run: flutter test
+      # - name: Build AAR
+      #   env:
+      #     ALIAS: ${{ secrets.KEY_ALIAS }}
+      #     PASS: ${{ secrets.KEY_PASS }}
+      #   run: flutter build appbundle --release
 
-      - run: flutter build apk --release
-        env:
-          ALIAS: ${{ secrets.KEY_ALIAS }}
-          PASS: ${{ secrets.KEY_PASS }}
+      # - run: flutter build apk --release
+      #   env:
+      #     ALIAS: ${{ secrets.KEY_ALIAS }}
+      #     PASS: ${{ secrets.KEY_PASS }}
 
       - name: Deploy Web
         run: flutter build web --web-renderer canvaskit
@@ -59,26 +59,26 @@ jobs:
           channelId: live
           projectId: invoices-app-c2491
 
-      - run: flutter build macos --release
+      # - run: flutter build macos --release
 
-      - name: Move files to root
-        run: |
-          mv build/app/outputs/apk/release/app-release.apk app-release.apk
-          mv build/app/outputs/bundle/release/app-release.aab app-release.aab
-          mv build/macos/Build/Products/Release/Ambush\ Invoice\ Generator.app Invoice.app
+      # - name: Move files to root
+      #   run: |
+      #     mv build/app/outputs/apk/release/app-release.apk app-release.apk
+      #     mv build/app/outputs/bundle/release/app-release.aab app-release.aab
+      #     mv build/macos/Build/Products/Release/Ambush\ Invoice\ Generator.app Invoice.app
 
-      - name: Zip macos.app
-        run: zip -r macos.zip Invoice.app
+      # - name: Zip macos.app
+      #   run: zip -r macos.zip Invoice.app
 
-      - name: Archive Files
-        uses: actions/upload-artifact@v2
-        with:
-          name: release-artifacts
-          path: |
-            app-release.apk
-            app-release.aab
-            pwa.zip
-            macos.zip
+      # - name: Archive Files
+      #   uses: actions/upload-artifact@v2
+      #   with:
+      #     name: release-artifacts
+      #     path: |
+      #       app-release.apk
+      #       app-release.aab
+      #       pwa.zip
+      #       macos.zip
 
   release:
     needs: build-release-files
