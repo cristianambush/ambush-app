@@ -52,13 +52,6 @@ jobs:
       - name: Deploy Web
         run: flutter build web --web-renderer canvaskit
 
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_INVOICES_APP_C2491 }}
-          channelId: live
-          projectId: invoices-app-c2491
-
       # - run: flutter build macos --release
 
       # - name: Move files to root
@@ -95,13 +88,20 @@ jobs:
 
       - run: ls -la ./downloaded-artifacts
 
-      - name: Release
-        uses: docker://antonyurchenko/git-release:v5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          args: |
-            ./downloaded-artifacts/app-release.apk
-            ./downloaded-artifacts/app-release.aab
-            ./downloaded-artifacts/pwa.zip
-            ./downloaded-artifacts/macos.zip
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_INVOICES_APP_C2491 }}
+          channelId: live
+          projectId: invoices-app-c2491
+
+      # - name: Release
+      #   uses: docker://antonyurchenko/git-release:v5
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     args: |
+      #       ./downloaded-artifacts/app-release.apk
+      #       ./downloaded-artifacts/app-release.aab
+      #       ./downloaded-artifacts/pwa.zip
+      #       ./downloaded-artifacts/macos.zip
