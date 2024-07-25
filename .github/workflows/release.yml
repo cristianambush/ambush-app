@@ -49,8 +49,8 @@ jobs:
       #     ALIAS: ${{ secrets.KEY_ALIAS }}
       #     PASS: ${{ secrets.KEY_PASS }}
 
-      - name: Deploy Web
-        run: flutter build web --web-renderer canvaskit
+      - run: flutter build web --web-renderer canvaskit
+      - run: zip -r pwa.zip build/web
 
       # - run: flutter build macos --release
 
